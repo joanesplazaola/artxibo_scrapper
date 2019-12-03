@@ -4,8 +4,8 @@ import numpy as np
 from helpers import get_last_number, get_row, tratatu_datuak
 
 hasiera = get_last_number(["bautizo", "hileta", "ezkontza"])
-denera = 1500
-zati_kop = 10
+denera = 1_954_537
+zati_kop = 1_000
 
 jasotzeko = denera - hasiera
 zatiak = [1]
