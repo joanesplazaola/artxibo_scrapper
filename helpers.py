@@ -1,10 +1,13 @@
 import csv
 from collections import defaultdict
-
+from torrequest import TorRequest
 import requests
 from bs4 import BeautifulSoup
 
-
+tr = TorRequest(password="Ibargarai182b!")
+tr.reset_identity()
+response= tr.get('http://ipecho.net/plain')
+print ("New Ip Address",response.text)
 def get_last_number(files):
     values = []
     for file in files:
@@ -21,15 +24,17 @@ def get_last_number(files):
     return init
 
 
-
 def get_row(id):
     values = ["b", "d", "m"]
     orrialdea = f"https://artxiboa.mendezmende.org/es/busque-partidas-sacramentales/ver.html?id={id}&sacramento="
+    fitxategia = None
     for v in values:
-        page = requests.get(url=orrialdea + v)
+        page = tr.get(url=orrialdea + v)
         if page.status_code != 404:
             fitxategia = v
             break
+    if fitxategia is None:
+        return [id], "t"
     content = page.content
     soup = BeautifulSoup(content, 'html.parser')
     taula = soup.find('section', id='identificacion')
@@ -42,7 +47,7 @@ def get_row(id):
 
 
 def tratatu_datuak(records):
-    fitxategiak = {"b": "bautizo", "m": "ezkontza", "d": "hileta"}
+    fitxategiak = {"b": "bautizo", "m": "ezkontza", "d": "hileta", "t": "txarra"}
     d = defaultdict(list)
     types = list(list(zip(*records))[1])
     content = list(list(zip(*records))[0])
