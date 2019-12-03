@@ -9,11 +9,11 @@ hasiera = get_last_number(["bautizo", "hileta", "ezkontza"])
 denera = 1_954_537
 
 bautizo_file = open("bautizo.csv", "a")
-b_writter = csv.writer(bautizo_file, delimiter='|', quoting=csv.QUOTE_MINIMAL)
+b_writter = csv.writer(bautizo_file, delimiter='|', quoting=csv.QUOTE_MINIMAL, lineterminator="\n")
 hileta_file = open("hileta.csv", "a")
-d_writter = csv.writer(hileta_file, delimiter='|', quoting=csv.QUOTE_MINIMAL)
+d_writter = csv.writer(hileta_file, delimiter='|', quoting=csv.QUOTE_MINIMAL, lineterminator="\n")
 ezkontza_file = open("ezkontza.csv", "a")
-m_writter = csv.writer(ezkontza_file, delimiter='|', quoting=csv.QUOTE_MINIMAL)
+m_writter = csv.writer(ezkontza_file, delimiter='|', quoting=csv.QUOTE_MINIMAL, lineterminator="\n")
 
 values = {"b": b_writter, "d": d_writter, "m": m_writter}
 
