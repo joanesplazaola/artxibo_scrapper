@@ -3,6 +3,9 @@ import requests
 from bs4 import BeautifulSoup
 import tqdm
 
+from helpers import get_last_number
+
+hasiera = get_last_number(["bautizo", "hileta", "ezkontza"])
 denera = 1_954_537
 
 bautizo_file = open("bautizo.csv", "a")
@@ -14,7 +17,7 @@ m_writter = csv.writer(ezkontza_file, delimiter='|', quoting=csv.QUOTE_MINIMAL)
 
 values = {"b": b_writter, "d": d_writter, "m": m_writter}
 
-for id in tqdm.tqdm(range(1, denera + 1)):
+for id in tqdm.tqdm(range(hasiera, denera + 1)):
     orrialdea = f"https://artxiboa.mendezmende.org/es/busque-partidas-sacramentales/ver.html?id={id}&sacramento="
     for k, v in values.items():
         page = requests.get(url=orrialdea + k)
