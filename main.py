@@ -1,38 +1,22 @@
-import csv
-import requests
-from bs4 import BeautifulSoup
 import tqdm
-
-from helpers import get_last_number
+from multiprocessing import Pool
+import numpy as np
+from helpers import get_last_number, get_row, tratatu_datuak
 
 hasiera = get_last_number(["bautizo", "hileta", "ezkontza"])
-denera = 1_954_537
+denera = 10_000
+zati_kop = 10
 
-bautizo_file = open("bautizo.csv", "a")
-b_writter = csv.writer(bautizo_file, delimiter='|', quoting=csv.QUOTE_MINIMAL, lineterminator="\n")
-hileta_file = open("hileta.csv", "a")
-d_writter = csv.writer(hileta_file, delimiter='|', quoting=csv.QUOTE_MINIMAL, lineterminator="\n")
-ezkontza_file = open("ezkontza.csv", "a")
-m_writter = csv.writer(ezkontza_file, delimiter='|', quoting=csv.QUOTE_MINIMAL, lineterminator="\n")
+jasotzeko = denera - hasiera
+zatiak = [1]
+zatiak += [int(jasotzeko / zati_kop)] * zati_kop
 
-values = {"b": b_writter, "d": d_writter, "m": m_writter}
+if jasotzeko % zati_kop != 0:
+    zatiak += [jasotzeko % zati_kop]
+zatiak = np.cumsum(zatiak)
 
-for id in tqdm.tqdm(range(hasiera, denera + 1)):
-    orrialdea = f"https://artxiboa.mendezmende.org/es/busque-partidas-sacramentales/ver.html?id={id}&sacramento="
-    for k, v in values.items():
-        page = requests.get(url=orrialdea + k)
-        if page.status_code != 404:
-            fitxategia = v
-            break
-
-    content = page.content
-    soup = BeautifulSoup(content, 'html.parser')
-
-    taula = soup.find('section', id='identificacion')
-
-    ident = [td.get_text() for td in taula.find_all('td')]
-
-    taula2 = soup.find('section', id='localizacion')
-    loc = [td.get_text() for td in taula2.find_all('td')]
-
-    fitxategia.writerow([id] + ident + loc)
+for index in tqdm.tqdm(range(len(zatiak) - 1)):
+    with Pool(50) as p:
+        ids = list(range(zatiak[index], zatiak[index + 1]))
+        records = p.map(get_row, ids)
+        tratatu_datuak(records)
